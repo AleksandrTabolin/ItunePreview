@@ -1,62 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary"
+    android:orientation="vertical"
     android:padding="8dp">
 
-    <ImageView
-        android:id="@+id/fragment_player_cover"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <ImageView
-        android:id="@+id/fragment_player_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        app:srcCompat="@drawable/ic_clear"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center"/>
-
     <LinearLayout
-        android:id="@+id/fragment_player_title_block"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginLeft="16dp"
-        android:layout_toRightOf="@id/fragment_player_cover"
-        android:layout_toLeftOf="@id/fragment_player_close"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/fragment_player_song"
+        <ImageView
+            android:id="@+id/fragment_player_cover"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:textColor="@color/colorAccent"
-            android:ellipsize="end"
-            android:textSize="16sp" />
+            android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/fragment_player_artist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textSize="12sp" />
+
+        <LinearLayout
+            android:id="@+id/fragment_player_title_block"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fragment_player_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp" />
+
+
+            <TextView
+                android:id="@+id/fragment_player_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/fragment_player_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:layout_alignParentRight="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            app:srcCompat="@drawable/ic_clear" />
+
+
 
     </LinearLayout>
 
 
     <LinearLayout
-        android:layout_below="@id/fragment_player_title_block"
         android:layout_width="match_parent"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_height="wrap_content">
+        android:orientation="horizontal">
 
         <FrameLayout
             android:layout_width="48dp"
@@ -67,9 +78,9 @@
                 android:id="@+id/fragment_player_action"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:srcCompat="@drawable/ic_play_circle"
                 android:background="?android:attr/selectableItemBackground"
-                android:gravity="center"/>
+                android:gravity="center"
+                app:srcCompat="@drawable/ic_play_circle" />
 
 
             <com.github.rahatarmanahmed.cpv.CircularProgressView
@@ -91,8 +102,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"/>
+            android:layout_marginRight="8dp" />
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

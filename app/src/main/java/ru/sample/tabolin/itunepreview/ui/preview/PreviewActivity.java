@@ -156,7 +156,7 @@ public class PreviewActivity extends MvpAppCompatActivity implements PreviewView
         int iconRes = listAppearance == ListAppearance.LIST
                 ? R.drawable.ic_view_module : R.drawable.ic_view_stream;
 
-        listAppearanceButton.setImageDrawable(ContextCompat.getDrawable(this, iconRes));
+        listAppearanceButton.setImageResource(iconRes);
 
         int columnCount = isPortraitOrientation() ? 2 : 3;
 

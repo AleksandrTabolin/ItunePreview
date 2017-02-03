@@ -103,13 +103,13 @@ public class MediaPlaybackUiHelper implements MediaPlaybackService.Callback{
             case STARTED:
                 preparingView.setVisibility(View.INVISIBLE);
                 actionView.setVisibility(View.VISIBLE);
-                actionView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_pause_circle));
+                actionView.setImageResource(R.drawable.ic_pause_circle);
                 break;
             case STOP:
             case PAUSE:
                 preparingView.setVisibility(View.INVISIBLE);
                 actionView.setVisibility(View.VISIBLE);
-                actionView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_play_circle));
+                actionView.setImageResource(R.drawable.ic_play_circle);
                 break;
         }
     }
