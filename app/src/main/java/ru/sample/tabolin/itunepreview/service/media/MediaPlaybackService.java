@@ -127,8 +127,8 @@ public class MediaPlaybackService extends Service implements MediaPlayer.OnCompl
     }
 
     public void stop() {
+        setState(PlayerState.STOP);
         if (mediaPlayer.isPlaying()) {
-            setState(PlayerState.STOP);
             mediaPlayer.stop();
         }
         mediaPlayer.reset();

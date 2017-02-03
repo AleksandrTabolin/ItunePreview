@@ -12,6 +12,6 @@ import ru.sample.tabolin.itunepreview.web.response.LoadPreviewListResponse;
 
 public interface WebApiContract {
 
-    @GET("search/media=music")
+    @GET("search/?media=music")
     Single<LoadPreviewListResponse> loadPreviewListByKeyWord(@Query("term") String keyWord);
 }
