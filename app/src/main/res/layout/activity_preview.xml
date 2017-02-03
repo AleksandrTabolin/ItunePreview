@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:animateLayoutChanges="true"
     tools:context="ru.sample.tabolin.itunepreview.ui.preview.PreviewActivity">
 
     <LinearLayout
@@ -13,6 +14,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:orientation="horizontal">
 
         <EditText
@@ -20,6 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginRight="8dp"
+            android:hint="Enter keyword..."
             android:layout_weight="1" />
 
         <ImageView
@@ -37,8 +41,8 @@
         android:id="@+id/activity_preview_data_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginTop="72dp" />
 
     <com.github.rahatarmanahmed.cpv.CircularProgressView
@@ -46,8 +50,15 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:visibility="gone"
         app:cpv_animAutostart="true"
         app:cpv_indeterminate="true" />
+
+
+    <FrameLayout
+        android:id="@+id/activity_player_container"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_height="wrap_content"/>
 
 </FrameLayout>

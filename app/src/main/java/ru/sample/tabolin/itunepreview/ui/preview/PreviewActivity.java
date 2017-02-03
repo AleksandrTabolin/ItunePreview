@@ -2,14 +2,17 @@ package ru.sample.tabolin.itunepreview.ui.preview;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,9 +35,12 @@ import ru.sample.tabolin.itunepreview.R;
 import ru.sample.tabolin.itunepreview.domain.PreviewModel;
 import ru.sample.tabolin.itunepreview.mvp.presenter.PreviewPresenter;
 import ru.sample.tabolin.itunepreview.mvp.view.PreviewView;
+import ru.sample.tabolin.itunepreview.service.media.MediaPlaybackServiceHelper;
+import ru.sample.tabolin.itunepreview.ui.player.MediaPlaybackUiHelper;
+import ru.sample.tabolin.itunepreview.util.Util;
 import ru.sample.tabolin.itunepreview.util.rx.RxTextView;
 
-public class PreviewActivity extends MvpAppCompatActivity implements PreviewView {
+public class PreviewActivity extends MvpAppCompatActivity implements PreviewView, OnPreviewItemListClickListener {
 
     enum ListAppearance{
         LIST, GRID
@@ -46,7 +52,9 @@ public class PreviewActivity extends MvpAppCompatActivity implements PreviewView
     @BindView(R.id.activity_preview_data_list) RecyclerView listView;
     @BindView(R.id.activity_preview_progress) CircularProgressView progressView;
     @BindView(R.id.activity_preview_change_list_appearance) ImageView listAppearanceButton;
+    @BindView(R.id.activity_player_container) FrameLayout playerContainer;
 
+    private MediaPlaybackServiceHelper mediaPlaybackServiceHelper;
     private PreviewListAdapter listAdapter;
 
     @InjectPresenter PreviewPresenter previewPresenter;
@@ -65,15 +73,83 @@ public class PreviewActivity extends MvpAppCompatActivity implements PreviewView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview);
+
         ButterKnife.bind(this);
         Icepick.restoreInstanceState(this, savedInstanceState);
 
-        listAdapter = new PreviewListAdapter(this);
+        mediaPlaybackServiceHelper = new MediaPlaybackServiceHelper();
+        mediaPlaybackServiceHelper.start(this);
+
+        playerContainer.getLayoutParams().width = getPlayerContainerWidth();
+
+        MediaPlaybackUiHelper mediaPlaybackUiHelper = createMediaPlaybackUiHelper(playerContainer);
+        mediaPlaybackServiceHelper.setCallback(mediaPlaybackUiHelper);
+
+        listAdapter = new PreviewListAdapter(this, this);
         listView.setAdapter(listAdapter);
+        listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING){
+                    hideKeyboard();
+                }
+            }
+        });
+
         setListAppearance(listView);
 
         searchView.setText(keyWord);
         bindSearchView(searchView);
+    }
+
+    private void hideKeyboard(){
+        searchView.clearFocus();
+        Util.hideKeyboard(PreviewActivity.this);
+    }
+
+
+    private MediaPlaybackUiHelper createMediaPlaybackUiHelper(FrameLayout playerContainer){
+        return MediaPlaybackUiHelper.createAndAttach(playerContainer, new MediaPlaybackUiHelper.Callback() {
+            @Override
+            public void onActionBtnClick() {
+                mediaPlaybackServiceHelper.action();
+            }
+
+            @Override
+            public void onCloseClick() {
+                mediaPlaybackServiceHelper.stop();
+                mediaPlaybackServiceHelper.setPreview(null);
+            }
+
+            @Override
+            public void onProgressChanged(int progress) {
+                mediaPlaybackServiceHelper.seekTo(progress);
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mediaPlaybackServiceHelper.connect(this);
+    }
+
+    @Override
+    protected void onStop() {
+        mediaPlaybackServiceHelper.disconnect(this);
+        super.onStop();
+    }
+
+    private int getPlayerContainerWidth(){
+        if (isPortraitOrientation()){
+            return ViewGroup.LayoutParams.MATCH_PARENT;
+        }
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int maxWidth = displaymetrics.widthPixels;
+        int playerWidth = getResources().getDimensionPixelSize(R.dimen.player_container_land_width);
+        return Math.min(maxWidth, playerWidth);
     }
 
     private void setListAppearance(RecyclerView listView){
@@ -82,13 +158,22 @@ public class PreviewActivity extends MvpAppCompatActivity implements PreviewView
 
         listAppearanceButton.setImageDrawable(ContextCompat.getDrawable(this, iconRes));
 
-        boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-        int columnCount = isPortrait ? 2 : 3;
+        int columnCount = isPortraitOrientation() ? 2 : 3;
 
         listView.setLayoutManager(listAppearance == ListAppearance.LIST
                 ? new LinearLayoutManager(this)
                 : new GridLayoutManager(this, columnCount)
         );
+    }
+
+    private boolean isPortraitOrientation(){
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+    }
+
+    @Override
+    public void onBackPressed() {
+        mediaPlaybackServiceHelper.stopService(this);
+        super.onBackPressed();
     }
 
     @Override
@@ -113,6 +198,13 @@ public class PreviewActivity extends MvpAppCompatActivity implements PreviewView
         listAppearance = listAppearance == ListAppearance.LIST
                 ? ListAppearance.GRID : ListAppearance.LIST;
         setListAppearance(listView);
+    }
+
+    @Override
+    public void onPreviewItemListClick(PreviewModel item) {
+        hideKeyboard();
+        mediaPlaybackServiceHelper.setPreview(item);
+
     }
 
     @Override

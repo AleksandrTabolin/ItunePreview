@@ -15,14 +15,16 @@ public class PreviewListAdapter extends RecyclerView.Adapter<PreviewListViewHold
     private final LayoutInflater inflater;
 
     private List<PreviewModel> items = Collections.emptyList();
+    private OnPreviewItemListClickListener onClickListener;
 
-    public PreviewListAdapter(Context context) {
+    public PreviewListAdapter(Context context, OnPreviewItemListClickListener onClickListener) {
         inflater = LayoutInflater.from(context);
+        this.onClickListener = onClickListener;
     }
 
     @Override
     public PreviewListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return PreviewListViewHolder.create(inflater, parent);
+        return PreviewListViewHolder.create(inflater, parent, onClickListener);
     }
 
     public void setItems(List<PreviewModel> items){
